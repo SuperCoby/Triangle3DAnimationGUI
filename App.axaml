@@ -1,0 +1,33 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Triangle3DAnimationGUI.App"
+             RequestedThemeVariant="Dark">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.Styles>
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml"/>
+        <SimpleTheme />
+
+        <Style Selector="NumericUpDown">
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Padding" Value="4,4,0,4"/>
+        </Style>
+
+        <Style Selector="CheckBox">
+            <Setter Property="ClickMode" Value="Press"/>
+        </Style>
+
+        <Style Selector="Button">
+            <Setter Property="ClickMode" Value="Press"/>
+        </Style>
+        
+    </Application.Styles>
+</Application>

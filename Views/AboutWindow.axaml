@@ -1,0 +1,48 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Triangle3DAnimationGUI.Views.AboutWindow"
+        CanResize="False"
+        Icon="/Assets/logo-black.ico"
+        Width="290" Height="280"
+        Title="About"
+        WindowStartupLocation="CenterOwner">
+    <ScrollViewer>
+        <StackPanel Margin="20" Spacing="8">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock FontSize="13" Foreground="#888" VerticalAlignment="Center">Mokuura: </TextBlock>
+                <TextBlock Text=" Project creator"
+                           Foreground="#2196F3"
+                           FontSize="14"
+                           Cursor="Hand"
+                           TextDecorations="Underline"
+                           VerticalAlignment="Center"
+                           PointerPressed="OnMokuuraClick"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock FontSize="13" Foreground="#888" VerticalAlignment="Center">SuperCoby: </TextBlock>
+                <TextBlock Text=" .exe conversion"
+                           Foreground="#2196F3"
+                           FontSize="14"
+                           Cursor="Hand"
+                           TextDecorations="Underline"
+                           VerticalAlignment="Center"
+                           PointerPressed="OnSuperCobyClick"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock FontSize="13" Foreground="#888" VerticalAlignment="Center">TractorFan: </TextBlock>
+                <TextBlock Text=" Code optimization"
+                           Foreground="#2196F3"
+                           FontSize="14"
+                           Cursor="Hand"
+                           TextDecorations="Underline"
+                           VerticalAlignment="Center"
+                           PointerPressed="OnTractorFanClick"/>
+            </StackPanel>
+            <TextBlock FontSize="13" Margin="0" Foreground="#888">GBX.NET by bigbang1112</TextBlock>
+            <TextBlock FontSize="13" Margin="0" Foreground="#888">Avalonia for GUI</TextBlock>
+            <TextBlock FontSize="13" Margin="0" Foreground="#888">Licensed under GNU GPL v3</TextBlock>
+            <TextBlock FontSize="13" Margin="0" Foreground="#888">Version 1.1.0</TextBlock>
+            <Button HorizontalAlignment="Right" Width="30" Margin="0,16,0,0" Click="OnCloseClick">OK</Button>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

@@ -1,0 +1,411 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Triangle3DAnimationGUI.ViewModels"
+        xmlns:controls="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="clr-namespace:Triangle3DAnimationGUI.Models"
+        xmlns:views="clr-namespace:Triangle3DAnimationGUI.Views"
+        xmlns:utils="clr-namespace:Triangle3DAnimationGUI.Utils"
+        mc:Ignorable="d"
+        CanResize="False"
+        SizeToContent="Height"
+        d:DesignWidth="418" d:DesignHeight="450"
+        Width="418" Height="450"
+        MaxHeight="700"
+        x:Class="Triangle3DAnimationGUI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/logo-black.ico"
+        Title="Triangle3DAnimationGUI"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <utils:EmptyStringToZeroConverter x:Key="EmptyStringToZeroConverter" />
+        <utils:FloatRgbInputConverter x:Key="FloatRgbInputConverter" />
+        <utils:FileSizeInfoBeforeArrowConverter x:Key="FileSizeInfoBeforeArrowConverter" />
+        <utils:FileSizeInfoAfterArrowConverter x:Key="FileSizeInfoAfterArrowConverter" />
+        <utils:BoolToBrushConverter x:Key="BoolToBrushConverter" />
+        <utils:BoolNegationConverter x:Key="BoolNegationConverter" />
+    </Window.Resources>
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <DockPanel>
+        <!-- Barre de menus principale en haut -->
+        <Menu DockPanel.Dock="Top">
+            <Menu.Items>
+                <MenuItem Header="File">
+                    <MenuItem Header="New" Command="{Binding NewCommand}"/>
+                    <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
+                    <MenuItem Header="Save" Command="{Binding SaveCommand}"/>
+                    <MenuItem Header="Save as" Command="{Binding SaveAsCommand}"/>
+                    <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+                </MenuItem>
+                <MenuItem Header="View">
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding ShowRender, Mode=TwoWay}" Margin="0,0,8,0"/>
+                                <TextBlock Text="Render"/>
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding ShowWireframe, Mode=TwoWay}" Margin="0,0,8,0"/>
+                                <TextBlock Text="Wireframe"/>
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding ShowFaces, Mode=TwoWay}" Margin="0,0,8,0"/>
+                                <TextBlock Text="Faces"/>
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding ShowVertices, Mode=TwoWay}" Margin="0,0,8,0"/>
+                                <TextBlock Text="Vertices"/>
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding ShowColor, Mode=TwoWay}" Margin="0,0,8,0"/>
+                                <TextBlock Text="Color"/>
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding ShowOrigin, Mode=TwoWay}" Margin="0,0,8,0"/>
+                                <TextBlock Text="Origin"/>
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding ShowGrid, Mode=TwoWay}" Margin="0,0,8,0"/>
+                                <TextBlock Text="Grid"/>
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding ShowMaterialsTable, Mode=TwoWay}" Margin="0,0,8,0"/>
+                                <TextBlock Text="Materials"/>
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Preset" Click="OnPresetClick"/>
+                <MenuItem Header="About" Click="OnAboutClick"/>
+                <!-- Espaceur pour pousser les boutons à droite -->
+                <MenuItem IsEnabled="False" BorderThickness="0" Background="Transparent">
+                    <MenuItem.Header>
+                        <Grid Width="180" Height="0"/>
+                    </MenuItem.Header>
+                </MenuItem>
+                <MenuItem Header="+" Click="OnTopmostPlusClick" ToolTip.Tip="displayed in the foreground"/>
+                <MenuItem Header="-" Click="OnTopmostMinusClick" ToolTip.Tip="displayed in the background"/>
+            </Menu.Items>
+        </Menu>
+
+        <!-- Le contenu principal avec scroll -->
+        <ScrollViewer x:Name="MainScrollViewer" VerticalScrollBarVisibility="Visible">
+            <StackPanel Margin="4" Spacing="4">
+            
+                <!-- Paths -->
+                <Grid ColumnDefinitions="*, 80">
+                    <TextBox Grid.Column="0" Watermark="Obj Path" Text="{Binding ObjPath}"/>
+                    <Button Grid.Column="1" 
+                            Command="{Binding BrowseObjCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">Browse Obj...</Button>
+                </Grid>
+
+                <Grid ColumnDefinitions="*, 80">
+                    <TextBox Grid.Column="0"  Watermark="Gbx Path" Text="{Binding GbxPath}"/>
+                    <Button Grid.Column="1"
+                            Command="{Binding BrowseGbxCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">Browse Gbx...</Button>
+                </Grid>
+
+                <!-- Barre de chargement OBJ (après Gbx Path) -->
+                <ProgressBar IsVisible="{Binding IsLoading}" IsIndeterminate="True" Height="8" Margin="0,4,0,4"/>
+
+                <!-- 3D OBJ Viewer avec bouton Play/Pause en overlay -->
+                <Grid Margin="0,8,0,8" IsVisible="{Binding ShowRender}">
+                    <views:Obj3DView
+                        DataContext="{Binding}"
+                        Model="{Binding Obj3DModel}"
+                        ShowWireframe="{Binding ShowWireframe, Mode=TwoWay}"
+                        ShowFaces="{Binding ShowFaces, Mode=TwoWay}"
+                        ShowVertices="{Binding ShowVertices, Mode=TwoWay}"
+                        ShowColor="{Binding ShowColor, Mode=TwoWay}"
+                        ShowGrid="{Binding ShowGrid, Mode=TwoWay}"
+                        ShowRender="{Binding ShowRender, Mode=TwoWay}"
+                        ShowOrigin="{Binding ShowOrigin, Mode=TwoWay}"
+                        OriginX="{Binding OriginX, Mode=TwoWay}"
+                        OriginY="{Binding OriginY, Mode=TwoWay}"
+                        OriginZ="{Binding OriginZ, Mode=TwoWay}"
+                        AnimationTime="{Binding AnimationTime}"
+                        />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,8,8,0">
+                        <Button Width="24" Height="24" Padding="0"
+                                Command="{Binding ResetAnimationCommand}"
+                                Background="Transparent" Foreground="Black" Focusable="False" BorderThickness="0">
+                            <TextBlock Text="⏮" FontFamily="Segoe UI Emoji" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+                        <Button Width="24" Height="24" Padding="0"
+                                Command="{Binding PlayCommand}"
+                                IsEnabled="{Binding IsPlaying, Converter={StaticResource BoolNegationConverter}}"
+                                Background="Transparent" Foreground="Black" Focusable="False" BorderThickness="0">
+                            <TextBlock Text="▶️" FontFamily="Segoe UI Emoji" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+                        <Button Width="24" Height="24" Padding="0"
+                                Command="{Binding PauseCommand}"
+                                IsEnabled="{Binding IsPlaying}"
+                                Background="Transparent" Foreground="Black" Focusable="False" BorderThickness="0">
+                            <TextBlock Text="⏸" FontFamily="Segoe UI Emoji" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+                        <Button Width="24" Height="24" Padding="0"
+                                Command="{Binding GoToEndAnimationCommand}"
+                                Background="Transparent" Foreground="Black" Focusable="False" BorderThickness="0">
+                            <TextBlock Text="⏭️" FontFamily="Segoe UI Emoji" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+                        <ToggleButton Width="24" Height="24" Padding="0"
+                                      IsChecked="{Binding IsRepeatEnabled, Mode=TwoWay}"
+                                      Background="Transparent" Foreground="Black" Focusable="False" BorderThickness="0">
+                            <TextBlock Text="🔁" FontFamily="Segoe UI Emoji" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </ToggleButton>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Tableau des matériaux -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="180" IsVisible="{Binding ShowMaterialsTable}">
+                    <controls:DataGrid x:Name="MaterialsDataGrid"
+                                      ItemsSource="{Binding Obj3DModel.Materials}"
+                                      AutoGenerateColumns="False"
+                                      IsVisible="{Binding ShowMaterialsTable}"
+                                      Margin="0" MinHeight="0"
+                                      HorizontalAlignment="Left"
+                                      Height="132">
+                        <!-- 4 lignes * 33px environ (hauteur par défaut d'une ligne DataGrid Avalonia) -->
+                        <controls:DataGrid.Columns>
+                            <controls:DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                            <controls:DataGridTextColumn Header="R" Binding="{Binding DiffuseR, Mode=TwoWay, Converter={StaticResource FloatRgbInputConverter}}" Width="*"/>
+                            <controls:DataGridTextColumn Header="G" Binding="{Binding DiffuseG, Mode=TwoWay, Converter={StaticResource FloatRgbInputConverter}}" Width="*"/>
+                            <controls:DataGridTextColumn Header="B" Binding="{Binding DiffuseB, Mode=TwoWay, Converter={StaticResource FloatRgbInputConverter}}" Width="*"/>
+                        </controls:DataGrid.Columns>
+                    </controls:DataGrid>
+                </ScrollViewer>
+
+                <!-- Model Position -->
+                <StackPanel Margin="4">
+                    <TextBlock HorizontalAlignment="Center">Model Position</TextBlock>
+
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="4" Spacing="10">
+                        <StackPanel Orientation="Horizontal" Spacing="2">
+                            <TextBlock VerticalAlignment="Center">X:</TextBlock>
+                            <NumericUpDown MinWidth="64" Height="24" Value="{Binding OriginX}" Increment="32"/>
+                        </StackPanel>
+            
+                        <StackPanel Orientation="Horizontal" Spacing="2">
+                            <TextBlock VerticalAlignment="Center">Y:</TextBlock>
+                            <NumericUpDown MinWidth="64" Height="24" Value="{Binding OriginY}" Increment="8"/>
+                        </StackPanel>
+            
+                        <StackPanel Orientation="Horizontal" Spacing="2">
+                            <TextBlock VerticalAlignment="Center">Z:</TextBlock>
+                            <NumericUpDown MinWidth="64" Height="24" Value="{Binding OriginZ}" Increment="32"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Checkbox Translation Animation -->
+                <StackPanel Orientation="Horizontal" Margin="4,0,0,8" VerticalAlignment="Center">
+                    <CheckBox IsChecked="{Binding IsTranslationAnimation}" VerticalAlignment="Center"/>
+                    <TextBlock Text="Translation Animation" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Text=" (Time Invalid)" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="Red" IsVisible="{Binding IsTranslationTimeInvalid}"/>
+                </StackPanel>
+
+                <!-- Editable TranslationRows -->
+                <StackPanel IsVisible="{Binding IsTranslationAnimation}">
+                    <ScrollViewer MaxHeight="140" MinHeight="0" Padding="0" Margin="0" VerticalAlignment="Top" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <controls:DataGrid x:Name="TranslationDataGrid" ItemsSource="{Binding TranslationRows}" 
+                                           AutoGenerateColumns="False" 
+                                           Margin="0" MinHeight="0"
+                                           HorizontalAlignment="Left"
+                                           SelectedItem="{Binding SelectedTranslationRow, Mode=TwoWay}">
+                            <controls:DataGrid.Columns>
+                                <controls:DataGridTextColumn Header="Time" Binding="{Binding StartTime, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="EndTime" Binding="{Binding EndTime, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="X" Binding="{Binding X, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="Y" Binding="{Binding Y, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="Z" Binding="{Binding Z, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                            </controls:DataGrid.Columns>
+                        </controls:DataGrid>
+                    </ScrollViewer>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0" Spacing="4">
+                        <Button Content="+" Width="32" Command="{Binding AddTranslationRowCommand}"/>
+                        <Button Content="-" Width="32" Command="{Binding RemoveTranslationRowCommand}" 
+                                IsEnabled="{Binding CanRemoveTranslationRow}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Checkbox Scaling Animation -->
+                <StackPanel Orientation="Horizontal" Margin="4,0,0,8" VerticalAlignment="Center">
+                    <CheckBox IsChecked="{Binding IsScalingAnimation}" VerticalAlignment="Center"/>
+                    <TextBlock Text="Scaling Animation" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Text=" (Time Invalid)" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="Red" IsVisible="{Binding IsScalingTimeInvalid}"/>
+                </StackPanel>
+
+                <!-- Editable ScalingRows -->
+                <StackPanel IsVisible="{Binding IsScalingAnimation}">
+                    <ScrollViewer MaxHeight="140" MinHeight="0" Padding="0" Margin="0" VerticalAlignment="Top" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <controls:DataGrid x:Name="ScalingDataGrid" ItemsSource="{Binding ScalingRows}"
+                                           AutoGenerateColumns="False"
+                                           Margin="0" MinHeight="0"
+                                           HorizontalAlignment="Left"
+                                           SelectedItem="{Binding SelectedScalingRow, Mode=TwoWay}">
+                            <controls:DataGrid.Columns>
+                                <controls:DataGridTextColumn Header="Time" Binding="{Binding StartTime, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="EndTime" Binding="{Binding EndTime, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="X" Binding="{Binding ScaleX, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="Y" Binding="{Binding ScaleY, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="Z" Binding="{Binding ScaleZ, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                            </controls:DataGrid.Columns>
+                        </controls:DataGrid>
+                    </ScrollViewer>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0" Spacing="4">
+                        <Button Content="+" Width="32" Command="{Binding AddScalingRowCommand}" IsEnabled="{Binding IsScalingAnimation}"/>
+                        <Button Content="-" Width="32" Command="{Binding RemoveScalingRowCommand}"
+                                IsEnabled="{Binding CanRemoveScalingRow}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Checkbox Rotation Animation -->
+                <StackPanel Orientation="Horizontal" Margin="4,0,0,8" VerticalAlignment="Center">
+                    <CheckBox IsChecked="{Binding IsRotationAnimation}" VerticalAlignment="Center"/>
+                    <TextBlock Text="Rotation Animation" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Text=" (Time Invalid)" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="Red" IsVisible="{Binding IsRotationTimeInvalid}"/>
+                    <TextBlock Text=" (Steps Invalid)" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="Red" IsVisible="{Binding IsRotationStepsInvalid}"/>
+                </StackPanel>
+
+                <!-- Editable RotationRows -->
+                <StackPanel IsVisible="{Binding IsRotationAnimation}">
+                    <ScrollViewer MaxHeight="140" MinHeight="0" Padding="0" Margin="0" VerticalAlignment="Top" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <controls:DataGrid x:Name="RotationDataGrid" ItemsSource="{Binding RotationRows}"
+                                           AutoGenerateColumns="False"
+                                           Margin="0" MinHeight="0"
+                                           HorizontalAlignment="Left"
+                                           SelectedItem="{Binding SelectedRotationRow, Mode=TwoWay}">
+                            <controls:DataGrid.Columns>
+                                <controls:DataGridTextColumn Header="Time" Binding="{Binding StartTime, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="EndTime" Binding="{Binding EndTime, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="X" Binding="{Binding X, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="Y" Binding="{Binding Y, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="Z" Binding="{Binding Z, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="Steps" Binding="{Binding Steps, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                            </controls:DataGrid.Columns>
+                        </controls:DataGrid>
+                    </ScrollViewer>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0" Spacing="4">
+                        <Button Content="+" Width="32" Command="{Binding AddRotationRowCommand}"/>
+                        <Button Content="-" Width="32" Command="{Binding RemoveRotationRowCommand}" 
+                                IsEnabled="{Binding CanRemoveRotationRow}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Checkbox Orbit Animation -->
+                <StackPanel Orientation="Horizontal" Margin="4,0,0,8" VerticalAlignment="Center">
+                    <CheckBox IsChecked="{Binding IsOrbitEnabled}" VerticalAlignment="Center"/>
+                    <TextBlock Text="Orbit Animation" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Text=" (Time Invalid)" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="Red" IsVisible="{Binding IsOrbitTimeInvalid}"/>
+                    <TextBlock Text=" (Steps Invalid)" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="Red" IsVisible="{Binding IsOrbitStepsInvalid}"/>
+                </StackPanel>
+
+                <!-- Editable OrbitRows -->
+                <StackPanel IsVisible="{Binding IsOrbitEnabled}">
+                    <ScrollViewer MaxHeight="140" MinHeight="0" Padding="0" Margin="0" VerticalAlignment="Top" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <controls:DataGrid x:Name="OrbitDataGrid" ItemsSource="{Binding OrbitRows}"
+                                           AutoGenerateColumns="False"
+                                           Margin="0" MinHeight="0"
+                                           HorizontalAlignment="Left"
+                                           SelectedItem="{Binding SelectedOrbitRow, Mode=TwoWay}">
+                            <controls:DataGrid.Columns>
+                                <controls:DataGridTextColumn Header="Time" Binding="{Binding StartTime, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="EndTime" Binding="{Binding EndTime, Mode=TwoWay, TargetNullValue=0, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="Radius" Binding="{Binding Radius, Mode=TwoWay, TargetNullValue=100, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="Steps" Binding="{Binding Steps, Mode=TwoWay, TargetNullValue=60, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                                <controls:DataGridTextColumn Header="Degrees (°)" Binding="{Binding Degrees, Mode=TwoWay, TargetNullValue=360, Converter={StaticResource EmptyStringToZeroConverter}}" Width="*"/>
+                            </controls:DataGrid.Columns>
+                        </controls:DataGrid>
+                    </ScrollViewer>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0" Spacing="4">
+                        <Button Content="+" Width="32" Command="{Binding AddOrbitRowCommand}"/>
+                        <Button Content="-" Width="32" Command="{Binding RemoveOrbitRowCommand}" 
+                                IsEnabled="{Binding CanRemoveOrbitRow}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Slider Shading Intensity -->
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,8" VerticalAlignment="Center" Spacing="8">
+                    <TextBlock Text="Shading Intensity" VerticalAlignment="Center"/>
+                    <Slider Minimum="0" Maximum="1" Value="{Binding ShadingIntensity, Mode=TwoWay}" Width="120"/>
+                    <TextBlock Text="{Binding ShadingIntensity, StringFormat=F2}" VerticalAlignment="Center" Width="40"/>
+                </StackPanel>
+
+                <!-- Export & Status -->
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <ComboBox SelectedIndex="{Binding SelectedClipGroup}" Width="70">
+                        <ComboBoxItem>Intro</ComboBoxItem>
+                        <ComboBoxItem>Global</ComboBoxItem>
+                        <ComboBoxItem>In Game</ComboBoxItem>
+                        <ComboBoxItem>End Race</ComboBoxItem>
+                    </ComboBox>
+                    <ComboBox ItemsSource="{Binding DropdownClips}" SelectedIndex="{Binding SelectedClip}" MaxWidth="150"/>
+                    <ComboBox ItemsSource="{Binding DropdownTracks}" SelectedIndex="{Binding SelectedTrack}" MaxWidth="150" IsEnabled="{Binding EnableTracks}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button HorizontalAlignment="Left" IsEnabled="{Binding CanExport}" Command="{Binding ExportCommand}" Focusable="False">Export</Button>
+                    <Button HorizontalAlignment="Left" IsEnabled="{Binding CanExportChallenge}" Command="{Binding ExportAsChallengeCommand}" Focusable="False">Export As Challenge...</Button>
+                    <Button HorizontalAlignment="Left" IsEnabled="{Binding CanExport}" Command="{Binding ExportAsClipCommand}" Focusable="False">Export As Clip...</Button>
+                </StackPanel>
+                
+                <TextBlock HorizontalAlignment="Left" Margin="4" TextWrapping="Wrap" Text="{Binding StatusLabel}"/>
+
+                <DockPanel Margin="0,0,0,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="4,0,0,4" MinWidth="180" MaxWidth="320" DockPanel.Dock="Left">
+                        <TextBlock
+                            Text="{Binding FileSizeInfo, Converter={StaticResource FileSizeInfoBeforeArrowConverter}}"
+                            FontFamily="Consolas, Courier New, monospace"
+                            TextWrapping="Wrap"/>
+                        <TextBlock
+                            Text="{Binding FileSizeInfo, Converter={StaticResource FileSizeInfoAfterArrowConverter}}"
+                            FontFamily="Consolas, Courier New, monospace"
+                            TextWrapping="Wrap"
+                            Foreground="{Binding IsExportSizeTooLarge, Converter={StaticResource BoolToBrushConverter}}"/>
+                    </StackPanel>
+                    <TextBlock Text="By SuperCoby"
+                               VerticalAlignment="Bottom"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,8,4"
+                               DockPanel.Dock="Right"/>
+                </DockPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

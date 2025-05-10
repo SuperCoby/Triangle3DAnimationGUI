@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Triangle3DAnimationGUI.ViewModels"
+             x:Class="Triangle3DAnimationGUI.Views.Obj3DView"
+             x:DataType="vm:MainWindowViewModel"
+             Width="400" Height="200">
+    <!-- Suppression du Canvas pour permettre le dessin direct dans Render -->
+    <Grid>
+        <!-- Le Render est géré dans le code-behind (Render override) -->
+        <!-- Boutons de rotation en bas à droite -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,8,8">
+            <!-- ToggleButton orbite supprimé ici -->
+            <Button Width="28" Height="28" Padding="0" Margin="2,0" Content="↔" ToolTip.Tip="90° horizontal" Click="OnRotateYClick"/>
+            <Button Width="28" Height="28" Padding="0" Margin="2,0" Content="↕" ToolTip.Tip="90° vertical" Click="OnRotateXClick"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
