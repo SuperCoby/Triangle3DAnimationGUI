@@ -7,7 +7,7 @@
 - Compatible with TMUF, TM², and TM2020
 
 - Translation / Rotation / Scaling Animations
-Animate your object using separate transformations for position, rotation, and scale.
+Animate your object using separate transformations for position, rotation, scale and orbit.
 
 - Shading Intensity
 Creates fake shadows on faces.
@@ -24,9 +24,15 @@ When a map is loaded, the tool automatically detects if a Triangle3D object alre
 - Export Options
 Export directly into the map, clip.Gbx or challenge.Gbx.
 
+
 <p align="center">
   <img src="https://github.com/user-attachments/assets/0d9b72df-bfbd-4b1f-b690-ccdc72a277c0" alt="ggg" />
 </p>
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=udt7QD11rLA">Video</a>
+</p>
+
 
 ## Credits
 
