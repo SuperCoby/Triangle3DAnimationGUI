@@ -41,7 +41,7 @@
             <TextBlock FontSize="13" Margin="0" Foreground="#888">GBX.NET by bigbang1112</TextBlock>
             <TextBlock FontSize="13" Margin="0" Foreground="#888">Avalonia for GUI</TextBlock>
             <TextBlock FontSize="13" Margin="0" Foreground="#888">Licensed under GNU GPL v3</TextBlock>
-            <TextBlock FontSize="13" Margin="0" Foreground="#888">Version 1.1.0</TextBlock>
+            <TextBlock FontSize="13" Margin="0" Foreground="#888">Version 1.2.0</TextBlock>
             <Button HorizontalAlignment="Right" Width="30" Margin="0,16,0,0" Click="OnCloseClick">OK</Button>
         </StackPanel>
     </ScrollViewer>
