@@ -6,8 +6,7 @@
 
 - Compatible with TMUF, TM², and TM2020
 
-- Translation / Rotation / Scaling Animations
-Animate your object using separate transformations for position, rotation, scale and orbit.
+- Animate your object using separate transformations for position, rotation, scale and orbit.
 
 - Shading Intensity
 Creates fake shadows on faces.
