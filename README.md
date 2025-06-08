@@ -2,7 +2,6 @@
   Triangle3DAnimationGUI
 </h1>
 
-[![GitHub all releases](https://img.shields.io/github/downloads/SuperCoby/Triangle3DAnimationGUI/total)](https://github.com/SuperCoby/Triangle3DAnimationGUI/releases)
 
 ## Tool for converting .obj files into Triangle3D.
 
